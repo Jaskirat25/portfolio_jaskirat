@@ -1,8 +1,9 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "outputDirectory": "dist/client",
   "routes": [
+    { "src": "/api/(.*)", "dest": "/api/index.mjs" },
     { "src": "/(.*)", "dest": "/api/index.mjs" }
   ]
 }
