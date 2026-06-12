@@ -1,15 +1,21 @@
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Import the compiled SSR server from the dist output
-const serverModule = await import(path.join(__dirname, "../dist/server/server.js"));
-const server = serverModule.default;
+let server;
 
 export default async function handler(req, res) {
   try {
+    // Lazy-load server on first request
+    if (!server) {
+      try {
+        const serverModule = await import("../dist/server/server.js");
+        server = serverModule.default;
+      } catch (importErr) {
+        console.error("Failed to import server module:", importErr);
+        res.statusCode = 500;
+        res.setHeader("content-type", "text/html; charset=utf-8");
+        res.end(`<h1>Server initialization failed</h1><pre>${importErr.message}</pre>`);
+        return;
+      }
+    }
+
     const url = new URL(req.url, `https://${req.headers.host}`);
     const request = new Request(url.toString(), {
       method: req.method,
@@ -27,9 +33,9 @@ export default async function handler(req, res) {
     const arrayBuffer = await response.arrayBuffer();
     res.end(Buffer.from(arrayBuffer));
   } catch (err) {
-    console.error(err);
+    console.error("Request handler error:", err);
     res.statusCode = 500;
     res.setHeader("content-type", "text/html; charset=utf-8");
-    res.end("<h1>Server error</h1>");
+    res.end(`<h1>Server error</h1><pre>${err.message}</pre>`);
   }
 }
