@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download } from "lucide-react";
+import { Download, Mail, MapPin, Github, Linkedin, Menu, X, ArrowUpRight } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
 import resumeAsset from "@/assets/resume.pdf.asset.json";
+import { WorkGrid } from "../components/WorkGrid";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -9,13 +11,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Portfolio of Jaskirat Singh — designing tools for deep thinkers, bold creators, and quiet rebels.",
+          "Portfolio of Jaskirat Singh — Full Stack & AI Engineer building systems that ship to production.",
       },
       { property: "og:title", content: "Jaskirat — Full-Stack & AI Developer" },
       {
         property: "og:description",
         content:
-          "Portfolio of Jaskirat Singh — designing tools for deep thinkers, bold creators, and quiet rebels.",
+          "Portfolio of Jaskirat Singh — Full Stack & AI Engineer building systems that ship to production.",
       },
     ],
   }),
@@ -26,101 +28,321 @@ const VIDEO_URL =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4";
 
 const NAV_LINKS = [
-  { label: "Home", active: true },
-  { label: "Work", active: false },
-  { label: "About", active: false },
-  { label: "Journal", active: false },
-  { label: "Reach Us", active: false },
+  { label: "Home", href: "#home" },
+  { label: "Work", href: "#work" },
+  { label: "About", href: "#about" },
+  { label: "Milestones", href: "#milestones" },
+  { label: "Reach Us", href: "#reach-us" },
 ];
 
 function Index() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll(".fade-up");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
-    <main className="relative min-h-screen w-full overflow-hidden bg-[hsl(201,100%,13%)] text-white">
-      {/* Fullscreen background video */}
+    <main id="home" className="relative min-h-screen w-full bg-[#070e1a] text-[#E8F0FF] scroll-smooth">
+      {/* Background video */}
       <video
-        className="absolute inset-0 w-full h-full object-cover z-0"
+        className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        poster=""
       >
         <source src={VIDEO_URL} type="video/mp4" />
       </video>
 
-      {/* Navigation */}
-      <nav className="relative z-10 flex flex-row justify-between items-center px-6 sm:px-8 py-6 max-w-7xl mx-auto">
-        <a
-          href="/"
-          className="text-2xl sm:text-3xl tracking-tight text-white"
-          style={{ fontFamily: "'Instrument Serif', serif" }}
-        >
-          Jaskirat<sup className="text-xs">®</sup>
-        </a>
+      {/* Dark Overlay over Video */}
+      <div className="bg-overlay"></div>
 
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={`#${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-              className={`text-sm transition-colors ${
-                link.active
-                  ? "text-white"
-                  : "text-[hsl(240,4%,66%)] hover:text-white"
-              }`}
-            >
-              {link.label}
+      {/* Main Wrapper */}
+      <div ref={mainRef} className="relative z-10 w-full flex flex-col">
+        
+        {/* Navigation */}
+        <nav className="main-navbar">
+          <div className="nav-container">
+            <a href="#home" className="nav-logo">
+              Jaskirat<sup className="text-xs">®</sup>
             </a>
-          ))}
-        </div>
 
-        <a
-          href="mailto:Jaskiratsingh251103@gmail.com"
-          className="liquid-glass rounded-full px-5 sm:px-6 py-2.5 text-xs sm:text-sm text-white hover:scale-[1.03]"
-        >
-          Begin Journey
-        </a>
-      </nav>
+            <div className="nav-links-desktop">
+              {NAV_LINKS.map((link) => (
+                <a key={link.label} href={link.href} className="nav-link-item">
+                  {link.label}
+                </a>
+              ))}
+              <a
+                href="mailto:Jaskiratsingh251103@gmail.com"
+                className="btn-nav-journey"
+              >
+                Begin Journey
+              </a>
+            </div>
 
-      {/* Hero */}
-      <section className="relative z-10 flex flex-col items-center text-center px-6 pt-20 sm:pt-28 pb-24 sm:pb-40 py-[90px]">
-        <h1
-          className="animate-fade-rise text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px] max-w-7xl font-normal text-white"
-          style={{ fontFamily: "'Instrument Serif', serif" }}
-        >
-          Where{" "}
-          <em className="not-italic text-[hsl(240,4%,66%)]">dreams</em> rise{" "}
-          <em className="not-italic text-[hsl(240,4%,66%)]">
-            through the silence.
-          </em>
-        </h1>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="hamburger-toggle"
+              aria-label="Toggle Navigation"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-[#E8F0FF]" />
+              ) : (
+                <Menu className="w-6 h-6 text-[#E8F0FF]" />
+              )}
+            </button>
+          </div>
 
-        <p className="animate-fade-rise-delay text-[hsl(240,4%,66%)] text-base sm:text-lg max-w-2xl mt-8 leading-relaxed">
-          I'm designing tools for deep thinkers, bold creators, and quiet
-          rebels. Amid the chaos, I build digital spaces for sharp focus and
-          inspired work.
-        </p>
+          {/* Mobile Nav Dropdown */}
+          <div className={`nav-links-mobile ${mobileMenuOpen ? "open" : ""}`}>
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className="nav-link-item text-lg py-2"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="mailto:Jaskiratsingh251103@gmail.com"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn-nav-journey text-center mt-4 py-3"
+            >
+              Begin Journey
+            </a>
+          </div>
+        </nav>
 
-        <div className="animate-fade-rise-delay-2 mt-12 flex flex-col sm:flex-row items-center gap-4">
-          <a
-            href="#work"
-            className="liquid-glass rounded-full px-10 sm:px-14 py-4 sm:py-5 text-sm sm:text-base text-white hover:scale-[1.03] cursor-pointer"
-          >
-            Begin Journey
-          </a>
-          <a
-            href={resumeAsset.url}
-            download="Jaskirat_Singh_Resume.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="liquid-glass inline-flex items-center gap-3 rounded-full px-8 sm:px-10 py-4 sm:py-5 text-sm sm:text-base text-white hover:scale-[1.03] cursor-pointer"
-          >
-            <Download className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={2} />
-            Download CV
-          </a>
-        </div>
-      </section>
+        {/* Hero Section */}
+        <section className="hero-section content-container">
+          <h1 className="hero-title animate-fade-rise">
+            The stack is <span className="accent-blue">full</span>.<br />
+            The work is <em className="accent-gold italic">real.</em>
+          </h1>
+
+          <p className="hero-subtitle animate-fade-rise-delay">
+            I'm a Full Stack & AI Engineer — building systems that ship to production. Real-time platforms, intelligent crop advisory, deployed on AWS. I don't just learn things, I build them.
+          </p>
+
+          <div className="hero-ctas animate-fade-rise-delay-2">
+            <a href="#work" className="btn-cta-journey">
+              Begin Journey
+            </a>
+            <a
+              href={resumeAsset.url}
+              download="Jaskirat_Singh_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-cta-cv"
+            >
+              <Download className="w-4 h-4" />
+              Download CV
+            </a>
+          </div>
+        </section>
+
+        {/* Work Section */}
+        <WorkGrid />
+
+        {/* About Section */}
+        <section id="about" className="content-container fade-up">
+          <div className="about-grid">
+            <div className="about-left-col">
+              <span className="eyebrow">ABOUT ME</span>
+              <h2 className="about-heading">
+                The person behind the <em className="accent-gold">code</em>.
+              </h2>
+            </div>
+
+            <div className="about-right-col">
+              <p className="about-bio">
+                I'm Jaskirat Singh — a final-year B.Tech CSE student at Chandigarh Group of Colleges Landran (CGPA: 8.0, graduating August 2026), interning as a Data Science Trainee at Enest Technologies, Mohali.
+              </p>
+              <p className="about-bio">
+                I build across the full stack — from real-time backends and AI pipelines to production deployments on AWS. I care about code that actually ships, not just code that works in a notebook.
+              </p>
+              <p className="about-bio">
+                500+ LeetCode problems. 100+ on GeeksForGeeks. Certified in Advanced RAG by DeepLearning.AI. Looking for fresher roles as a Full Stack or AI Engineer in Chandigarh/Mohali.
+              </p>
+
+              <div className="skills-wrapper">
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-languages">Languages</h4>
+                  <div className="skill-tags">
+                    {["C++", "Java", "JavaScript", "TypeScript", "Python"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-languages">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-frontend">Frontend</h4>
+                  <div className="skill-tags">
+                    {["React.js", "Next.js", "Tailwind CSS", "HTML5", "CSS3"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-frontend">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-backend">Backend</h4>
+                  <div className="skill-tags">
+                    {["Node.js", "Express.js", "Flask", "FastAPI"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-backend">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-databases">Databases</h4>
+                  <div className="skill-tags">
+                    {["MongoDB", "MySQL", "PostgreSQL"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-databases">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-ai">AI / ML</h4>
+                  <div className="skill-tags">
+                    {["LangChain", "RAG", "MobileNetV2", "FAISS", "Gemini API", "Scikit-learn"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-ai">{s}</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="skill-group">
+                  <h4 className="skill-group-label label-devops">DevOps</h4>
+                  <div className="skill-tags">
+                    {["Docker", "GitHub Actions", "CI/CD", "AWS (EC2, RDS, ECS)"].map((s) => (
+                      <span key={s} className="skill-badge-common badge-devops">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Milestones Section */}
+        <section id="milestones" className="content-container">
+          <span className="eyebrow">JOURNEY</span>
+          <h2 className="section-title">Milestones</h2>
+          <div className="milestones-grid">
+            <div className="milestone-card fade-up stagger-1">
+              <div className="milestone-number">500+</div>
+              <h3 className="milestone-title">500+ LeetCode</h3>
+              <p className="milestone-desc">
+                Built my DSA foundation in C++ before writing a single line of frontend code.
+              </p>
+            </div>
+            <div className="milestone-card fade-up stagger-2">
+              <div className="milestone-number">⚡</div>
+              <h3 className="milestone-title">Shipped to AWS</h3>
+              <p className="milestone-desc">
+                QuickChat runs on EC2 + RDS with zero-downtime CI/CD. Production is the only real test.
+              </p>
+            </div>
+            <div className="milestone-card fade-up stagger-3">
+              <div className="milestone-number">🎓</div>
+              <h3 className="milestone-title">DeepLearning.AI Certified</h3>
+              <p className="milestone-desc">
+                Advanced RAG — because knowing how retrieval-augmented generation actually works matters.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Reach Us Section */}
+        <section id="reach-us" className="content-container fade-up">
+          <span className="eyebrow">GET IN TOUCH</span>
+          <h2 className="section-title">Let's build something real.</h2>
+          <div className="reach-grid">
+            <div className="reach-left-col">
+              <p className="about-bio mb-8">
+                Open to fresher/intern roles in Full Stack or AI Engineering. Based in Chandigarh, India. Reach out anytime.
+              </p>
+              <div className="space-y-4">
+                <a href="#" className="contact-link-item" onClick={(e) => e.preventDefault()}>
+                  <div className="contact-icon-box">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <span>Chandigarh, India</span>
+                </a>
+                <a href="mailto:Jaskiratsingh251103@gmail.com" className="contact-link-item">
+                  <div className="contact-icon-box">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <span>Jaskiratsingh251103@gmail.com</span>
+                </a>
+                <a href="https://github.com/Jaskirat25" target="_blank" rel="noopener noreferrer" className="contact-link-item">
+                  <div className="contact-icon-box">
+                    <Github className="w-5 h-5" />
+                  </div>
+                  <span>github.com/Jaskirat25</span>
+                </a>
+                <a href="https://linkedin.com/in/jaskirat-singh-dev" target="_blank" rel="noopener noreferrer" className="contact-link-item">
+                  <div className="contact-icon-box">
+                    <Linkedin className="w-5 h-5" />
+                  </div>
+                  <span>linkedin.com/in/jaskirat-singh-dev</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="reach-right-col">
+              <form className="reach-form" onSubmit={(e) => e.preventDefault()}>
+                <div className="form-row-dual">
+                  <input
+                    type="text"
+                    className="reach-input"
+                    placeholder="Name"
+                    required
+                  />
+                  <input
+                    type="email"
+                    className="reach-input"
+                    placeholder="Email"
+                    required
+                  />
+                </div>
+                <textarea
+                  className="reach-textarea"
+                  placeholder="Message"
+                  required
+                ></textarea>
+                <button type="submit" className="btn-form-submit">
+                  Send Message
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="footer-bar">
+          <p className="footer-text">Jaskirat Singh © 2026 · Built with intention.</p>
+        </footer>
+      </div>
     </main>
   );
 }
+
+
